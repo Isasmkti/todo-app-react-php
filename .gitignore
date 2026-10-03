@@ -1,0 +1,5 @@
+# Mengabaikan file sampah sistem operasi & editor di level root
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
