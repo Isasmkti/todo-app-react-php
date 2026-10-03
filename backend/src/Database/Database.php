@@ -19,7 +19,7 @@ function getConnection()
         throw new Exception("Error: " . $pesan_error);
     }
 
-    // test woi lu itu siapa
+
 
     
     return $koneksi;

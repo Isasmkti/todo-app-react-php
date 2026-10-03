@@ -1,5 +1,5 @@
 <?php
-require_once '../src/Database/Database.php';
+require_once __DIR__ .'/../Database/Database.php';
 
 class TodoRepository
 {
@@ -33,11 +33,26 @@ class TodoRepository
         return $todos;
     }
 
-    public function create($data)
-    {
-        // Contoh jika method create butuh koneksi juga, tinggal pakai $this->db
-        $query = "INSERT INTO todos (user_id, title) VALUES ()";
+   public function create(array $data)
+    {   
+        // 1 & 2. Ambil user_id dan title dari array
+        $userId = $data['user_id'] ?? null;
+        $title = $data['title'] ?? null;
 
-        pg_query($this->db, $query);
+        // 3. Buat query INSERT dengan placeholder $1 dan $2
+        $query = "INSERT INTO todos (user_id, title) VALUES ($1, $2) RETURNING *";
+
+        // 4 & 5. Gunakan pg_query_params dan masukkan data ke dalam array parameter
+        $result = pg_query_params($this->db, $query, [$userId, $title]);
+
+        if (!$result) {
+            return null; // Atau tangani error sesuai kebutuhan
+        }
+
+        // 6 & 7. Ambil row hasil INSERT (karena pakai RETURNING *, datanya ada 1 baris)
+        $todo = pg_fetch_assoc($result);
+
+        // 8. Return Todo tersebut
+        return $todo ? $todo : null;
     }
 }

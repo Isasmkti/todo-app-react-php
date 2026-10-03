@@ -8,7 +8,8 @@ if ($method == 'GET' && $path =='/todos'){
    $todoController = new TodoController;
    $todoController -> getAll();
    exit;
-}
-
-
+} else if ($method == 'POST' && $path =='/todos'){
+   $todoController = new TodoController;
+   $todoController -> create();
+};
 ?>
