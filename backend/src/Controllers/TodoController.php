@@ -36,4 +36,14 @@ class TodoController
             "data" => $response
         ]);
     }
+
+    public function delete($id){
+        header("Content-Type: application/json; charset=UTF-8");
+        header("Access-Control-Allow-Origin: *");
+
+        $response = $this-> todoService->deleteTodo($id);
+        echo json_encode([
+            "data" => $response
+        ]);
+    }
 }

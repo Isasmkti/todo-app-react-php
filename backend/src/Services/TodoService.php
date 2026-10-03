@@ -21,6 +21,11 @@ class TodoService {
 
         return $newData;
     }
+
+    public function deleteTodo($id){
+        $data = $this -> todoRepo -> delete($id);
+        return $data;
+    }
 }
 
 ?>

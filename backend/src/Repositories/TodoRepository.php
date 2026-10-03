@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ .'/../Database/Database.php';
+require_once __DIR__ . '/../Database/Database.php';
 
 class TodoRepository
 {
@@ -10,18 +10,18 @@ class TodoRepository
     public function __construct()
     {
         // Asumsikan getConnection() adalah fungsi global dari Database.php
-        $this->db = getConnection(); 
+        $this->db = getConnection();
     }
 
     public function getAll()
     {
         $query = "SELECT * FROM todos";
-        
+
         // 3. Gunakan $this->db yang sudah disiapkan di atas
         $result = pg_query($this->db, $query);
 
         if (!$result) {
-            return []; 
+            return [];
         }
 
         $todos = pg_fetch_all($result);
@@ -33,8 +33,8 @@ class TodoRepository
         return $todos;
     }
 
-   public function create(array $data)
-    {   
+    public function create(array $data)
+    {
         // 1 & 2. Ambil user_id dan title dari array
         $userId = $data['user_id'] ?? null;
         $title = $data['title'] ?? null;
@@ -54,5 +54,18 @@ class TodoRepository
 
         // 8. Return Todo tersebut
         return $todo ? $todo : null;
+    }
+
+    public function delete($id)
+    {
+        $query = "DELETE FROM todos WHERE id = $1 RETURNING * ;";
+        $result = pg_query_params($this->db, $query, [$id]);
+        // cek berhasil/gagal
+        if (!$result) {
+            throw new Exception('ERROR: ID not found');
+        }
+
+        $item = pg_fetch_assoc($result);
+        return $item;
     }
 }
