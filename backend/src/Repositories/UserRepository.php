@@ -36,6 +36,9 @@ class UserRepository
         FROM users 
         WHERE email = $1';
         $result = pg_query_params($this->db, $query, [$email]);
+        if (!$result){
+            return null;
+        }
         $user = pg_fetch_assoc($result);
 
         return $user;

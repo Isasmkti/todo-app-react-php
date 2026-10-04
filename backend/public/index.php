@@ -16,6 +16,16 @@ switch ($method) {
       $todoController = new TodoController;
       $todoController->create();
       }
+
+      if ($path == '/register') {
+         $authController = new AuthController;
+         $authController->register();
+      }
+
+      if ($path == '/login'){
+         $authController = new AuthController;
+         $authController ->login();
+      }
       break;
    case 'DELETE':
       $pathId = explode("/", $path);
@@ -30,11 +40,3 @@ switch ($method) {
 };
 
 
-switch ($method) {
-   case 'POST':
-      if ($path == '/register') {
-         $authController = new AuthController;
-         $authController->register();
-      }
-      break;
-};

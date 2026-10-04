@@ -13,12 +13,12 @@ class TodoRepository
         $this->db = getConnection();
     }
 
-    public function getAll()
+    public function getAll($id)
     {
-        $query = "SELECT * FROM todos";
+        $query = "SELECT * FROM todos WHERE user_id = $1";
 
         // 3. Gunakan $this->db yang sudah disiapkan di atas
-        $result = pg_query($this->db, $query);
+        $result = pg_query_params($this->db, $query, [$id]);
 
         if (!$result) {
             return [];
@@ -56,23 +56,27 @@ class TodoRepository
         return $todo ? $todo : null;
     }
 
-    public function delete($id)
+    public function delete($id, $userId)
     {
-        $query = "DELETE FROM todos WHERE id = $1 RETURNING * ;";
-        $result = pg_query_params($this->db, $query, [$id]);
+        $query = "DELETE FROM todos WHERE id = $1 AND user_id = $2 RETURNING * ;";
+        $result = pg_query_params($this->db, $query, [$id, $userId]);
         // cek berhasil/gagal
         if (!$result) {
-            throw new Exception('ERROR: ID not found');
+            return [];
         }
 
         $item = pg_fetch_assoc($result);
         return $item;
     }
 
-    public function update($id, $data){
+    public function update($id, $data, $userId){
         $completed = $data['completed'];
-        $query = "UPDATE todos SET completed = $1 WHERE id = $2 RETURNING *;";
-        $result = pg_query_params($this->db, $query, [$completed, $id]);
+        $query = "UPDATE todos SET completed = $1  WHERE id = $2 AND user_id =$3 RETURNING *;";
+        $result = pg_query_params($this->db, $query, [$completed, $id, $userId]);
+
+        if (!$result){
+            return false;
+        }
 
         $task = pg_fetch_assoc($result);
         return $task;
