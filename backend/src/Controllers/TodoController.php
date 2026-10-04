@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../Services/TodoService.php';
+require_once __DIR__ . '/../Middleware/AuthMiddleware.php';
 
 class TodoController
 {
@@ -11,14 +12,24 @@ class TodoController
 
     public function getAll()
     {
-        session_start();
-        $id = $_SESSION['user_id'];
+        $userId = AuthMiddleware::userId();
+
+        if (!$userId) {
+            http_response_code(401);
+
+            echo json_encode([
+                "message" => "Unauthorized"
+            ]);
+
+            return;
+        }
+
         header("Content-Type: application/json; charset=UTF-8");
         header("Access-Control-Allow-Origin: *");
 
         // $todoService = new TodoService;
         echo json_encode([
-            "data" => $this->todoService->getAllTodos($id)
+            "data" => $this->todoService->getAllTodos($userId)
         ]);
     }
 
@@ -26,11 +37,22 @@ class TodoController
     {
         header("Content-Type: application/json; charset=UTF-8");
         header("Access-Control-Allow-Origin: *");
-        session_start();
+        
+        $userId = AuthMiddleware::userId();
+
+        if (!$userId) {
+            http_response_code(401);
+
+            echo json_encode([
+                "message" => "Unauthorized"
+            ]);
+
+            return;
+        }
         $rawInput = file_get_contents('php://input');
         $input = json_decode($rawInput, true);
         $data = [
-            "user_id" => $_SESSION['user_id'],
+            "user_id" => $userId,
             "title" => $input['title']
         ];
         $response = $this->todoService->createTodo($data);
@@ -44,8 +66,17 @@ class TodoController
     {
         header("Content-Type: application/json; charset=UTF-8");
         header("Access-Control-Allow-Origin: *");
-        session_start();
-        $userId = $_SESSION['user_id'];
+        $userId = AuthMiddleware::userId();
+
+        if (!$userId) {
+            http_response_code(401);
+
+            echo json_encode([
+                "message" => "Unauthorized"
+            ]);
+
+            return;
+        }
         $response = $this->todoService->deleteTodo($id, $userId);
         echo json_encode([
             "data" => $response
@@ -56,8 +87,17 @@ class TodoController
     {
         header("Content-Type: application/json; charset=UTF-8");
         header("Access-Control-Allow-Origin: *");
-        session_start();
-        $userId = $_SESSION['user_id'];
+        $userId = AuthMiddleware::userId();
+
+        if (!$userId) {
+            http_response_code(401);
+
+            echo json_encode([
+                "message" => "Unauthorized"
+            ]);
+
+            return;
+        }
         $rawInput = file_get_contents('php://input');
         $input = json_decode($rawInput, true);
 
