@@ -28,7 +28,7 @@ class TodoController
         $rawInput = file_get_contents('php://input');
         $input = json_decode($rawInput, true);
         $data = [
-            "title"=> $input['title']
+            "title" => $input['title']
         ];
         $response = $this->todoService->createTodo($data);
 
@@ -37,11 +37,26 @@ class TodoController
         ]);
     }
 
-    public function delete($id){
+    public function delete($id)
+    {
         header("Content-Type: application/json; charset=UTF-8");
         header("Access-Control-Allow-Origin: *");
 
-        $response = $this-> todoService->deleteTodo($id);
+        $response = $this->todoService->deleteTodo($id);
+        echo json_encode([
+            "data" => $response
+        ]);
+    }
+
+    public function update($id)
+    {
+        header("Content-Type: application/json; charset=UTF-8");
+        header("Access-Control-Allow-Origin: *");
+
+        $rawInput = file_get_contents('php://input');
+        $input = json_decode($rawInput, true);
+
+        $response = $this->todoService->update($id, $input);
         echo json_encode([
             "data" => $response
         ]);

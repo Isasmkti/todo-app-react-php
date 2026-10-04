@@ -68,4 +68,13 @@ class TodoRepository
         $item = pg_fetch_assoc($result);
         return $item;
     }
+
+    public function update($id, $data){
+        $completed = $data['completed'];
+        $query = "UPDATE todos SET completed = $1 WHERE id = $2 RETURNING *;";
+        $result = pg_query_params($this->db, $query, [$completed, $id]);
+
+        $task = pg_fetch_assoc($result);
+        return $task;
+    }
 }
