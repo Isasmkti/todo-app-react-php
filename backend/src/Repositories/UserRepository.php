@@ -22,21 +22,34 @@ class UserRepository
         $email = $data['email'];
         $password = $data['password'];
 
+        $result = @pg_query_params(
+            $this->db,
+            $query,
+            [$name, $email, $password]
+        );
 
-        $result = pg_query_params($this->db, $query, [$name, $email, $password]);
-         if (!$result) {
-            return null; // Atau tangani error sesuai kebutuhan
-        };
-        $user = pg_fetch_assoc($result);
-        return $user;
+        if (!$result) {
+            $error = pg_last_error($this->db);
+
+            if (str_contains($error, 'users_email_key')) {
+                return [
+                    "error" => "email_exists"
+                ];
+            }
+
+            return null;
+        }
+
+        return pg_fetch_assoc($result);
     }
 
-    public function findByEmail($email) {
+    public function findByEmail($email)
+    {
         $query = 'SELECT id, name, email, password, created_at 
         FROM users 
         WHERE email = $1';
         $result = pg_query_params($this->db, $query, [$email]);
-        if (!$result){
+        if (!$result) {
             return null;
         }
         $user = pg_fetch_assoc($result);

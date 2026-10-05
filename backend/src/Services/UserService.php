@@ -11,13 +11,17 @@ class UserService
     }
 
 
-    public function createUser(array $data)
-    {
-        $data['password'] = password_hash($data['password'], PASSWORD_DEFAULT);
-        $newUser = $this->userRepo->create($data);
+public function createUser(array $data)
+{
+    $data['password'] = password_hash(
+        $data['password'],
+        PASSWORD_DEFAULT
+    );
 
-        return $newUser;
-    }
+    $newUser = $this->userRepo->create($data);
+
+    return $newUser;
+}
 
     function login(array $data)
     {
@@ -28,10 +32,10 @@ class UserService
         };
 
         if (!password_verify($data['password'], $user['password'])) {
-           return null;
+            return null;
         }
+        unset($user['password']);
 
-        
         return $user;
     }
 }
