@@ -25,7 +25,7 @@ class TodoController
         }
 
         header("Content-Type: application/json; charset=UTF-8");
-        header("Access-Control-Allow-Origin: *");
+
 
         // $todoService = new TodoService;
         echo json_encode([
@@ -36,7 +36,7 @@ class TodoController
     public function create()
     {
         header("Content-Type: application/json; charset=UTF-8");
-        header("Access-Control-Allow-Origin: *");
+
 
         $userId = AuthMiddleware::userId();
 
@@ -90,7 +90,6 @@ class TodoController
     public function delete($id)
     {
         header("Content-Type: application/json; charset=UTF-8");
-        header("Access-Control-Allow-Origin: *");
         $userId = AuthMiddleware::userId();
 
         if (!$userId) {
@@ -122,7 +121,6 @@ class TodoController
     public function update($id)
     {
         header("Content-Type: application/json; charset=UTF-8");
-        header("Access-Control-Allow-Origin: *");
         $userId = AuthMiddleware::userId();
 
         if (!$userId) {

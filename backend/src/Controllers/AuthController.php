@@ -15,7 +15,6 @@ class AuthController
     public function register()
     {
         header("Content-Type: application/json; charset=UTF-8");
-        header("Access-Control-Allow-Origin: *");
 
         $rawInput = file_get_contents('php://input');
         $input = json_decode($rawInput, true);
@@ -61,7 +60,6 @@ class AuthController
     public function login()
     {
         header("Content-Type: application/json; charset=UTF-8");
-        header("Access-Control-Allow-Origin: *");
 
         $rawInput = file_get_contents('php://input');
         $input = json_decode($rawInput, true);

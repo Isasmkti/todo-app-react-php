@@ -20,10 +20,7 @@ class TodoService
         $cachedData = $this->cache->get($key);
 
         if ($cachedData) {
-            return [
-                "source" => "cache",
-                "data" => json_decode($cachedData, true)
-            ];
+            return json_decode($cachedData, true);
         }
 
         $data = $this->todoRepo->getAll($userId);
