@@ -10,17 +10,17 @@ class CacheService
         $this->redis->connect('127.0.0.1', 6379);
     }
 
-    public function set($key, $value, $ttl = 300)
+    public function set(string $key, string $value, $ttl = 300)
     {
         return $this->redis->setex($key, $ttl, $value);
     }
 
-    public function get($key)
+    public function get(string $key)
     {
         return $this->redis->get($key);
     }
 
-    public function delete($key)
+    public function delete(string $key)
     {
         return $this->redis->del($key);
     }
