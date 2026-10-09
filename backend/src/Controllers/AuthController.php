@@ -125,4 +125,22 @@ class AuthController
             "data" => $user
         ]);
     }
+
+
+    public function logout()
+{
+    header("Content-Type: application/json; charset=UTF-8");
+
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_start();
+    }
+
+    $_SESSION = [];
+
+    session_destroy();
+
+    echo json_encode([
+        "message" => "Logout berhasil"
+    ]);
+}
 }

@@ -13,7 +13,7 @@ try {
 
     // method dan path
     $method = $_SERVER['REQUEST_METHOD'];
-    $path = $_SERVER['REQUEST_URI'];
+    $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
     if ($method === 'OPTIONS') {
         http_response_code(204);
@@ -30,6 +30,12 @@ try {
             break;
 
         case 'POST':
+
+            if ($path === '/logout') {
+                $authController = new AuthController();
+                $authController->logout();
+                exit;
+            }
 
             if ($path == '/todos') {
 
