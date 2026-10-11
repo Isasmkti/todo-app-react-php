@@ -70,18 +70,45 @@ class TodoRepository
         return $item;
     }
 
-    public function update($id, $data, $userId){
-        $completed = $data['completed'];
-        $query = "UPDATE todos SET completed = $1  WHERE id = $2 AND user_id =$3 RETURNING *;";
-        $result = pg_query_params($this->db, $query, [$completed, $id, $userId]);
+public function update($id, $data, $userId)
+{
+    $sets = [];
+    $params = [];
 
-        if (!$result){
-            return false;
-        }
-
-        $task = pg_fetch_assoc($result);
-        return $task;
+    if (array_key_exists('title', $data)) {
+        $params[] = $data['title'];
+        $sets[] = 'title = $' . count($params);
     }
+
+    if (array_key_exists('completed', $data)) {
+        $params[] = $data['completed'];
+        $sets[] = 'completed = $' . count($params);
+    }
+
+    if (empty($sets)) {
+        return false;
+    }
+
+    $params[] = $id;
+    $idParam = count($params);
+
+    $params[] = $userId;
+    $userParam = count($params);
+
+    $query = "UPDATE todos
+              SET " . implode(', ', $sets) . "
+              WHERE id = $" . $idParam . "
+              AND user_id = $" . $userParam . "
+              RETURNING *";
+
+    $result = pg_query_params($this->db, $query, $params);
+
+    if (!$result) {
+        return false;
+    }
+
+    return pg_fetch_assoc($result) ?: false;
+}
 }
 
 

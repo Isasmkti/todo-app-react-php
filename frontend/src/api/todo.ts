@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:8000";
+const API_URL = import.meta.env.VITE_API_URL;
 
 async function request(path: string, options: RequestInit = {}) {
   const response = await fetch(`${API_URL}${path}`, {
@@ -40,12 +40,24 @@ export async function createTodo(title: string) {
 
 export async function updateTodo(
   id: string,
-  completed: boolean
+  changes: { title?: string; completed?: boolean }
 ) {
-  return request(`/todos/${id}`, {
+  const response = await fetch(`${API_URL}/todos/${id}`, {
     method: "PUT",
-    body: JSON.stringify({ completed }),
+    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(changes),
   });
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    throw new Error(result.message || "Gagal memperbarui todo");
+  }
+
+  return result.data;
 }
 
 export async function deleteTodo(id: string) {
