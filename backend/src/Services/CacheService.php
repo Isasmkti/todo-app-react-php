@@ -7,7 +7,7 @@ class CacheService
     public function __construct()
     {
         $this->redis = new Redis();
-        $this->redis->connect('127.0.0.1', 6379);
+        $this->redis->connect('127.0.0.1', 6380);
     }
 
     public function set(string $key, string $value, $ttl = 300)
@@ -25,3 +25,4 @@ class CacheService
         return $this->redis->del($key);
     }
 }
+

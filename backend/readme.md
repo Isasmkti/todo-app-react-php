@@ -22,6 +22,20 @@ Jalankan dari folder `backend`:
 
 ```bash
 php -S localhost:8000 -t public
+
+# wsl mode
+wsl
+
+# run container postgres and redis vallkey
+cd ~
+cd docker-lab
+docker compose up -d
+
+# insert db pw
+read -rsp "Masukkan password PostgreSQL: " DB_PASSWORD
+echo
+export DB_PASSWORD
+php -S 127.0.0.1:8000 -t public
 ````
 
 API akan tersedia di:

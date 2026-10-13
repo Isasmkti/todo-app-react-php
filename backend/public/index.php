@@ -77,6 +77,12 @@ try {
     }
 } catch (Throwable $e) {
 
+    error_log(
+        get_class($e) . ': ' . $e->getMessage()
+        . ' in ' . $e->getFile()
+        . ':' . $e->getLine()
+    );
+
     http_response_code(500);
 
     header("Content-Type: application/json; charset=UTF-8");
