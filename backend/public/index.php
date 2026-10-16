@@ -5,6 +5,7 @@ require_once '../src/Controllers/AuthController.php';
 
 
 
+
 try {
     header("Access-Control-Allow-Origin: http://localhost:5173");
     header("Access-Control-Allow-Credentials: true");
