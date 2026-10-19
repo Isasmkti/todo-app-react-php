@@ -10,9 +10,9 @@ $dotenv->load();
 function getConnection()
 {
     $host = "127.0.0.1";
-    $port = "5433";
+    $port = "5432";
     $dbname = "todo-app";
-    $user = "todo_user";
+    $user = $_ENV['DB_USER'] ?? "todo_user";
 
     // 1. Mengubah getenv() menjadi $_ENV (Lebih aman dan direkomendasikan phpdotenv)
     $password = $_ENV['DB_PASSWORD'] ?? false;
@@ -21,10 +21,15 @@ function getConnection()
         throw new Exception("Database password is not configured");
     }
 
+    $escapedPassword = str_replace(
+        ["\\", "'"],
+        ["\\\\", "\\'"],
+        $password
+    );
     $connection_string =
-        "host=$host port=$port dbname=$dbname user=$user password=$password";
+        "host=$host port=$port dbname=$dbname user=$user password='$escapedPassword'";
 
-    $koneksi = pg_connect($connection_string);
+    $koneksi = @pg_connect($connection_string);
 
     if (!$koneksi) {
         throw new Exception("Database connection failed");

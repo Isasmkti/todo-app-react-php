@@ -81,7 +81,7 @@ public function update($id, $data, $userId)
     }
 
     if (array_key_exists('completed', $data)) {
-        $params[] = $data['completed'];
+        $params[] = $data['completed'] ? 'true' : 'false';
         $sets[] = 'completed = $' . count($params);
     }
 
@@ -101,14 +101,15 @@ public function update($id, $data, $userId)
               AND user_id = $" . $userParam . "
               RETURNING *";
 
-    $result = pg_query_params($this->db, $query, $params);
+    $result = @pg_query_params($this->db, $query, $params);
 
     if (!$result) {
-        return false;
+        throw new RuntimeException(
+            'Todo update failed: ' . pg_last_error($this->db)
+        );
     }
 
     return pg_fetch_assoc($result) ?: false;
 }
 }
-
 

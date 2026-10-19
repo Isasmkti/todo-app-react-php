@@ -1,6 +1,18 @@
 const API_URL = import.meta.env.VITE_API_URL;
 
-async function request(path: string, options: RequestInit = {}) {
+type ApiResponse = {
+  data?: unknown;
+  message?: string;
+};
+
+function isApiResponse(value: unknown): value is ApiResponse {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+async function request(
+  path: string,
+  options: RequestInit = {}
+): Promise<ApiResponse> {
   const response = await fetch(`${API_URL}${path}`, {
     ...options,
     credentials: "include",
@@ -11,16 +23,26 @@ async function request(path: string, options: RequestInit = {}) {
   });
 
   const text = await response.text();
-  let data: any;
+  let data: unknown;
 
   try {
     data = JSON.parse(text);
   } catch {
-    throw new Error("Response server bukan JSON yang valid.");
+    throw new Error(
+      `Server mengembalikan response bukan JSON (HTTP ${response.status}).`
+    );
+  }
+
+  if (!isApiResponse(data)) {
+    throw new Error(
+      `Format response server tidak valid (HTTP ${response.status}).`
+    );
   }
 
   if (!response.ok) {
-    throw new Error(data.message || "Request gagal.");
+    throw new Error(
+      data.message || `Request gagal (HTTP ${response.status}).`
+    );
   }
 
   return data;
@@ -42,22 +64,11 @@ export async function updateTodo(
   id: string,
   changes: { title?: string; completed?: boolean }
 ) {
-  const response = await fetch(`${API_URL}/todos/${id}`, {
+  const response = await request(`/todos/${id}`, {
     method: "PUT",
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-    },
     body: JSON.stringify(changes),
   });
-
-  const result = await response.json();
-
-  if (!response.ok) {
-    throw new Error(result.message || "Gagal memperbarui todo");
-  }
-
-  return result.data;
+  return response.data;
 }
 
 export async function deleteTodo(id: string) {

@@ -16,6 +16,18 @@ Backend REST API untuk aplikasi Todo List dengan autentikasi berbasis PHP Sessio
 
 # Getting Started
 
+Configure `backend/.env` with `DB_USER` and `DB_PASSWORD` matching the PostgreSQL
+role credentials in the repository-root `.env` (`POSTGRES_USER` and
+`POSTGRES_PASSWORD`). PostgreSQL applies those Compose settings only when its
+data volume is initialized; changing them later does not change credentials in
+an existing volume.
+
+Initialize the application tables from the repository root:
+
+```powershell
+Get-Content backend/database/schema.sql | docker compose exec -T todo-postgres psql -U postgres -d todo-app
+```
+
 ## 1. Run PHP Development Server
 
 Jalankan dari folder `backend`:
@@ -701,5 +713,3 @@ Todo Dashboard
       ↓
 CRUD Todo
 ```
-
-

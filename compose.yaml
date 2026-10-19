@@ -5,7 +5,7 @@ services:
     container_name: todo-valkey
     restart: unless-stopped
     ports:
-      - "127.0.0.1:6379:6379"
+      - "127.0.0.1:6380:6379"
     healthcheck:
       test: ["CMD", "valkey-cli", "ping"]
       interval: 5s
